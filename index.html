@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Heart - Thảo Ngọc</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <div class="name">Thảo Ngọc</div>
+
+    <!-- Phần lá thư -->
+    <div class="letter-container">
+        <div class="envelope">
+            <div class="envelope-message">Nhấn để mở thư ❤️</div>
+        </div>
+        <div class="letter">
+            <div class="letter-content">
+                <h2>Gửi Thảo Ngọc,</h2>
+                <p>Em là ánh nắng trong cuộc đời anh, là nguồn cảm hứng bất tận của anh.</p>
+                <p>Mỗi khoảnh khắc bên em đều đáng trân trọng và đáng nhớ.</p>
+                <p>Anh yêu em rất nhiều, và tình yêu này sẽ mãi không thay đổi.</p>
+                <p>Mong rằng trái tim này sẽ là minh chứng cho tình yêu anh dành cho em.</p>
+                <p class="signature">Người yêu em ❤️</p>
+                <button class="close-letter">Đóng thư</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hiệu ứng lấp lánh theo chuột -->
+    <canvas id="sparkles"></canvas>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
