@@ -55,11 +55,14 @@ body {
 
 /* Thiết kế phong bì và lá thư */
 .letter-container {
-    position: absolute;
+    position: fixed;
+    /* Thay đổi từ absolute sang fixed */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 100;
+    pointer-events: auto;
+    /* Đảm bảo có thể click vào phong bì */
 }
 
 .envelope {
@@ -76,10 +79,17 @@ body {
     transform-style: preserve-3d;
     perspective: 1000px;
     border: 2px solid #fff;
+    position: relative;
+    /* Thêm position relative */
+    left: 0;
+    /* Reset lại vị trí */
+    transform: none;
+    /* Xóa transform từ hover effect cũ */
 }
 
 .envelope:hover {
-    transform: translate(-50%, -50%) scale(1.05);
+    transform: scale(1.05);
+    /* Chỉ scale mà không translate khi hover */
     box-shadow: 0 0 30px rgba(255, 0, 150, 0.8);
 }
 
@@ -93,9 +103,10 @@ body {
 }
 
 .letter {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: fixed;
+    /* Thay đổi từ absolute sang fixed */
+    top: 50%;
+    left: 50%;
     width: 80%;
     max-width: 600px;
     background: rgba(255, 255, 255, 0.95);

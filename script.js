@@ -87,7 +87,7 @@ function createHeart() {
 
     // Công thức hình trái tim với độ chính xác cao hơn
     const x = 0, y = 0;
-    const scale = 1.2; // Làm trái tim to hơn một chút
+    const scale = 2.0; // Làm trái tim to hơn nhiều
 
     // Vẽ trái tim với đường cong đẹp hơn và mượt mà hơn
     heartShape.moveTo(x, y + 0.5 * scale);
@@ -133,32 +133,33 @@ function createHeart() {
         x, y + 0.5 * scale
     );
 
-    // Tạo các tùy chọn geometry với chi tiết cao hơn
+    // Tạo các tùy chọn geometry với chi tiết cao hơn và ít mịn hơn để tạo hiệu ứng lấp lánh
     const extrudeSettings = {
-        depth: 0.8,
+        depth: 1.2, // Tăng độ dày
         bevelEnabled: true,
-        bevelSegments: 12, // Tăng số đoạn để làm mịn viền
-        bevelSize: 0.2,    // Giảm kích thước viền để trông mịn hơn
-        bevelThickness: 0.2,
-        curveSegments: 96  // Tăng số đoạn cong để tạo hình dáng mượt mà hơn
+        bevelSegments: 5, // Giảm đi để tạo cảm giác ít mịn hơn, lấp lánh
+        bevelSize: 0.3,
+        bevelThickness: 0.3,
+        curveSegments: 32 // Giảm đi để tạo hiệu ứng ít mịn hơn
     };
 
     // Tạo geometry và material 
     const geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
 
-    // Tạo material đẹp hơn với hiệu ứng ánh sáng
+    // Tạo material lấp lánh hơn
     const material = new THREE.MeshPhongMaterial({
         color: 0xff0080,
         emissive: 0x400020,
         specular: 0xffffff,
-        shininess: 150,
+        shininess: 200, // Tăng độ bóng
         reflectivity: 1,
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
+        flatShading: true // Thêm flatShading để tạo hiệu ứng lấp lánh, không nhẵn
     });
 
     // Tạo mesh trái tim
     heart = new THREE.Mesh(geometry, material);
-    heart.scale.set(0.6, 0.6, 0.6);
+    heart.scale.set(0.7, 0.7, 0.7); // Scale lớn hơn
     heart.rotation.x = Math.PI;
     heart.position.y = 0.2;
 
@@ -169,12 +170,40 @@ function createHeart() {
 
     // Thêm các đốm sáng vào trái tim
     addGlowingDots();
+
+    // Thêm hiệu ứng nhiễu (noise) cho bề mặt trái tim để tạo hiệu ứng lấp lánh
+    addNoiseToHeart(geometry);
+}
+
+// Thêm hàm mới để tạo hiệu ứng nhiễu cho bề mặt trái tim
+function addNoiseToHeart(geometry) {
+    // Lấy vị trí của các điểm
+    const positionAttribute = geometry.getAttribute('position');
+    const vertex = new THREE.Vector3();
+
+    // Thêm nhiễu vào mỗi điểm
+    for (let i = 0; i < positionAttribute.count; i++) {
+        vertex.fromBufferAttribute(positionAttribute, i);
+
+        // Thêm nhiễu nhỏ vào mỗi vertex
+        const noise = 0.05 * (Math.random() - 0.5);
+        vertex.x += noise;
+        vertex.y += noise;
+        vertex.z += noise;
+
+        // Cập nhật vị trí
+        positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
+    }
+
+    // Cần thiết lập thuộc tính này để Three.js biết cần tính toán lại normal
+    positionAttribute.needsUpdate = true;
+    geometry.computeVertexNormals();
 }
 
 // Hàm mới để tạo các đốm sáng trên bề mặt trái tim
 function addGlowingDots() {
-    const dotCount = 300;
-    const dotGeometry = new THREE.SphereGeometry(0.02, 12, 12);
+    const dotCount = 500; // Tăng số lượng đốm sáng
+    const dotGeometry = new THREE.SphereGeometry(0.025, 12, 12);
 
     // Sử dụng các màu khác nhau cho đốm sáng
     const dotColors = [
@@ -182,7 +211,8 @@ function addGlowingDots() {
         0xff88a8, // Hồng nhạt
         0xff5db1, // Hồng đậm
         0xffb6c1, // Hồng tươi
-        0xffd700  // Vàng gold
+        0xffd700, // Vàng gold
+        0xff0000  // Đỏ tươi
     ];
 
     // Lấy vertices từ trái tim để đặt đốm sáng lên bề mặt
@@ -195,22 +225,22 @@ function addGlowingDots() {
         const y = positions.getY(randomIndex);
         const z = positions.getZ(randomIndex);
 
-        // Tạo material cho đốm sáng
+        // Tạo material cho đốm sáng với độ phát sáng cao hơn
         const dotMaterial = new THREE.MeshBasicMaterial({
             color: dotColors[Math.floor(Math.random() * dotColors.length)],
             transparent: true,
-            opacity: Math.random() * 0.5 + 0.5,
+            opacity: Math.random() * 0.7 + 0.5,
         });
 
         // Tạo đốm sáng
         const dot = new THREE.Mesh(dotGeometry, dotMaterial);
         dot.position.set(x, y, z);
 
-        // Thêm thuộc tính cho hiệu ứng nhấp nháy
+        // Thêm thuộc tính cho hiệu ứng nhấp nháy mạnh hơn
         dot.userData = {
             originalOpacity: dotMaterial.opacity,
-            pulseFactor: Math.random() * 0.5 + 0.5,
-            pulseSpeed: Math.random() * 0.01 + 0.005
+            pulseFactor: Math.random() * 0.8 + 0.5,
+            pulseSpeed: Math.random() * 0.02 + 0.01
         };
 
         // Thêm đốm sáng vào trái tim
@@ -494,6 +524,11 @@ function animate() {
     if (heartGroup) {
         heartGroup.rotation.y += (targetRotationX - heartGroup.rotation.y) * 0.05;
         heartGroup.rotation.x += (targetRotationY - heartGroup.rotation.x) * 0.05;
+
+        // Thêm hiệu ứng đập cho trái tim
+        const time = Date.now() * 0.001;
+        const heartbeat = Math.pow(Math.sin(time * 1.5), 8) * 0.2 + 1; // Hiệu ứng đập mạnh, nhanh
+        heartGroup.scale.set(heartbeat, heartbeat, heartbeat);
     }
 
     // Hiệu ứng nhấp nháy cho các đốm sáng trên bề mặt trái tim
@@ -502,10 +537,10 @@ function animate() {
             if (dot.userData) {
                 const time = Date.now() * 0.001;
                 const pulse = Math.sin(time * dot.userData.pulseSpeed * 5) * dot.userData.pulseFactor;
-                dot.material.opacity = dot.userData.originalOpacity * (0.7 + pulse * 0.3);
+                dot.material.opacity = dot.userData.originalOpacity * (0.5 + pulse * 0.5); // Tăng độ chênh lệch opacity
 
                 // Thay đổi kích thước nhẹ
-                const scale = 0.8 + pulse * 0.2;
+                const scale = 0.7 + pulse * 0.3; // Tăng độ chênh lệch kích thước
                 dot.scale.set(scale, scale, scale);
             }
         });
